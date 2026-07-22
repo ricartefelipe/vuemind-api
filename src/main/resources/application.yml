@@ -1,0 +1,10 @@
+# Configuração mínima: só a porta importa aqui (8080 é o que o Vue já espera
+# quando apontarmos o baseURL/proxy para o backend real). Nada de datasource,
+# JPA ou profiles extras — isso entra quando trocarmos o "banco" em memória
+# por um banco de verdade.
+server:
+  port: 8080
+
+spring:
+  application:
+    name: vuemind-api
