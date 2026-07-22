@@ -34,6 +34,18 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-security</artifactId>
     </dependency>
+    <!--
+      Adicionado só para o endpoint de demo em wallet/reactive/ReactiveWalletController.java.
+      Coexiste com o starter-web sem conflito: como o classpath tem Servlet (Tomcat)
+      E Reactive Streams, o Spring Boot mantém WebApplicationType.SERVLET (deduceFromClasspath
+      só escolhe REACTIVE quando NÃO há Servlet no classpath) — a aplicação continua toda
+      em Tomcat/MVC, e o controller reativo só ganha o tipo Mono/Flux como retorno suportado
+      pelo adaptador reativo do Spring MVC. Ver README para o pitch completo.
+    -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-webflux</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>org.springframework.boot</groupId>

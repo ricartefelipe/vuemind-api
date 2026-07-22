@@ -30,6 +30,22 @@ public class MockBearerTokenFilter extends OncePerRequestFilter {
     public static final String MOCK_TOKEN = "mock-jwt-demo";
     private static final String BEARER_PREFIX = "Bearer ";
 
+    /**
+     * Por padrão o {@code OncePerRequestFilter} pula o dispatch assíncrono
+     * (a segunda passagem pela chain quando um {@code Mono}/{@code DeferredResult}
+     * termina — caso do endpoint reativo em {@code ReactiveWalletController}).
+     * Sem esse override, essa segunda passagem chega ao {@code AuthorizationFilter}
+     * com o {@code SecurityContextHolder} vazio (nunca foi persistido em sessão,
+     * já que a API é stateless) e a resposta final vira 401 mesmo com token
+     * válido. Reautenticar de novo aqui é barato (é só reler o header) e evita
+     * ter que mexer na estratégia global de {@code SecurityContext} só por
+     * causa deste endpoint de demo.
+     */
+    @Override
+    protected boolean shouldNotFilterAsyncDispatch() {
+        return false;
+    }
+
     @Override
     protected void doFilterInternal(
             @NonNull HttpServletRequest request,
