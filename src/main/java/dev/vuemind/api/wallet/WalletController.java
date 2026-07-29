@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-/** Rotas protegidas (ver {@code SecurityConfig}) — exigem `Authorization: Bearer mock-jwt-demo`. */
 @RestController
 @RequestMapping("/api/v1/wallet")
 public class WalletController {

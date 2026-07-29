@@ -10,12 +10,6 @@ import dev.vuemind.api.store.model.MockUser;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-/**
- * Regra de negócio do login, isolada do HTTP (o `AuthController` só traduz
- * request/response). Só existe UM usuário na base — o mesmo `demo@vuemind.dev`
- * do mock MSW — então aqui é apenas uma comparação direta; num backend real
- * isso seria um `UserDetailsService` + `PasswordEncoder` batendo num banco.
- */
 @Service
 public class AuthService {
 

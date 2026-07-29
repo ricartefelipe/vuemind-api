@@ -3,3 +3,7 @@ target/
 *.iml
 .vscode/
 .DS_Store
+.cursor/
+.superpowers/
+AGENTS.md
+PROMPT-EVOLUCAO.md
