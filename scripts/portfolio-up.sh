@@ -5,7 +5,7 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
 PORT="${PORT:-8080}"
-HEALTH_URL="${HEALTH_URL:-http://localhost:${PORT}/actuator/health}"
+HEALTH_URL="${HEALTH_URL:-http://localhost:${PORT}/api/v1/auth/login}"
 MAX_WAIT_SECONDS="${MAX_WAIT_SECONDS:-90}"
 IMAGE_NAME="${IMAGE_NAME:-vuemind-api}"
 PID_FILE="${PID_FILE:-/tmp/vuemind-api-portfolio.pid}"
@@ -13,9 +13,11 @@ LOG_FILE="${LOG_FILE:-/tmp/vuemind-api-portfolio.log}"
 
 wait_health() {
   local deadline=$((SECONDS + MAX_WAIT_SECONDS))
-  until curl -fsS "$HEALTH_URL" >/dev/null 2>&1; do
+  # Sem actuator: qualquer HTTP (4xx/405) prova que o Tomcat está no ar.
+  until [[ "$(curl -s -o /dev/null -w '%{http_code}' "$HEALTH_URL" || true)" =~ ^[1-5][0-9][0-9]$ ]]; do
     if (( SECONDS >= deadline )); then
-      echo "Timeout aguardando health: $HEALTH_URL" >&2
+      echo "Timeout aguardando app em: $HEALTH_URL" >&2
+      tail -n 40 "$LOG_FILE" >&2 || true
       return 1
     fi
     sleep 2
