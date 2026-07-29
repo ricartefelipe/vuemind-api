@@ -14,23 +14,6 @@ import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-/**
- * Regra de negócio do PIX — a mesma de `executePix` no mock MSW (função pura,
- * sem saber de HTTP), só que aqui debitando um {@code AtomicLong} de forma
- * atômica em vez de mutar um objeto JS single-threaded.
- *
- * Ordem das validações importa e é a mesma do contrato/mock:
- * 1. Idempotência primeiro — um retry com a mesma chave nunca debita de novo.
- * 2. Favorecido existe? (400 BENEFICIARY_NOT_FOUND)
- * 3. Valor é positivo? (400 INVALID_AMOUNT)
- * 4. Tem saldo? (409 INSUFFICIENT_FUNDS — é conflito de estado, não erro de
- *    input, por isso o código HTTP diferente dos dois de cima)
- *
- * Nota para a entrevista: em produção este débito+crédito precisaria também
- * de um registro "outbox" (evento `PixExecuted` gravado na MESMA transação
- * que debita o saldo) para publicar com segurança num tópico Kafka/SQS depois
- * — hoje isso é só comentário, não código, porque não há mensageria aqui.
- */
 @Service
 public class PixService {
 

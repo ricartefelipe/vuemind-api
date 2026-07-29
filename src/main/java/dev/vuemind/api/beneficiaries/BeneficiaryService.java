@@ -10,11 +10,6 @@ import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-/**
- * CRUD simples de favorecidos — sem banco, "criar" é dar `add` na lista e
- * "remover" é filtrar por id. Suficiente para exercitar o fluxo completo
- * (listar → cadastrar → remover) sem depender de persistência real.
- */
 @Service
 public class BeneficiaryService {
 
