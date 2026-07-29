@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class InMemoryStore {
 
-    private final MockUser user = new MockUser("u1", "Marion Demo", "demo@vuemind.dev", "demo123");
+    private final MockUser user = new MockUser("u1", "Felipe Demo", "demo@vuemind.dev", "demo123");
 
     private final AtomicLong availableCents = new AtomicLong(250_000);
     private final List<Beneficiary> beneficiaries = new CopyOnWriteArrayList<>();
