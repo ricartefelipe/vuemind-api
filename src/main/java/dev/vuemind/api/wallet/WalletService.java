@@ -10,11 +10,6 @@ import java.util.Comparator;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
-/**
- * Saldo e extrato são só leitura do {@link InMemoryStore}. O filtro do
- * extrato (`from`/`to`/`type`) roda em memória com stream — o mesmo papel
- * que uma cláusula `WHERE` cumpriria contra um banco real.
- */
 @Service
 public class WalletService {
 
@@ -34,13 +29,11 @@ public class WalletService {
                 .filter(transaction -> from == null || !transaction.createdAt().isBefore(from))
                 .filter(transaction -> to == null || !transaction.createdAt().isAfter(to))
                 .filter(transaction -> typeFilter == null || transaction.type() == typeFilter)
-                // Mais recente primeiro, como um extrato bancário de verdade.
                 .sorted(Comparator.comparing(Transaction::createdAt).reversed())
                 .map(this::toDto)
                 .toList();
     }
 
-    /** `type=ALL` (ou ausente) significa "sem filtro" — mesmo contrato do mock MSW. */
     private TransactionType parseType(String type) {
         if (type == null || type.isBlank() || type.equalsIgnoreCase("ALL")) {
             return null;

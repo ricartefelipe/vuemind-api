@@ -26,8 +26,6 @@ public class TransfersController {
     public TransferDto executePix(
             @RequestBody CreatePixRequest request,
             @RequestHeader(value = "Idempotency-Key", required = false) String idempotencyKey) {
-        // Sem chave enviada pelo client, geramos uma aleatória: efetivamente
-        // "sem deduplicação" para essa chamada, igual ao comportamento do mock.
         String key = (idempotencyKey != null && !idempotencyKey.isBlank())
                 ? idempotencyKey
                 : UUID.randomUUID().toString();

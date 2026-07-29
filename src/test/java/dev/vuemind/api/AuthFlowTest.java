@@ -12,11 +12,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-/**
- * Cobre o login — a porta de entrada de qualquer fluxo autenticado. Testa
- * o caminho feliz (token + usuário devolvidos) e o caminho de erro
- * (formato `ApiError` no 401), que é exatamente o contrato que o front espera.
- */
 @SpringBootTest
 @AutoConfigureMockMvc
 class AuthFlowTest {

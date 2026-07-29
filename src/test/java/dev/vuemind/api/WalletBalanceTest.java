@@ -12,11 +12,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 
-/**
- * Cobre a rota protegida mais simples: sem Bearer válido, ninguém entra
- * (401, formato `ApiError`); com o token mock, o saldo semeado no
- * {@code InMemoryStore} (R$ 2.500,00) volta certinho.
- */
 @SpringBootTest
 @AutoConfigureMockMvc
 class WalletBalanceTest {

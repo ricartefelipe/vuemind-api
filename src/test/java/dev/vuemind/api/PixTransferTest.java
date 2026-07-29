@@ -13,11 +13,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-/**
- * O caso de negócio mais rico do skeleton: saldo insuficiente precisa
- * devolver 409 (conflito de estado, não erro de input) no formato `ApiError`
- * — exatamente o que a tela de PIX do Vue usa para mostrar a mensagem certa.
- */
 @SpringBootTest
 @AutoConfigureMockMvc
 class PixTransferTest {

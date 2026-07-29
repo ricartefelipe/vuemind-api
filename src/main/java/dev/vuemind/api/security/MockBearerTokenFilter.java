@@ -12,35 +12,11 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-/**
- * Segurança propositalmente simples: o contrato (`vuemind-wallet-openapi.yaml`)
- * já documenta que o token é "opaco mock (mock-jwt-demo); no Spring real será
- * um JWT". Este filtro só confere se o header `Authorization` é exatamente
- * `Bearer mock-jwt-demo` — o mesmo token fixo que `AuthService` devolve no
- * login e que o MSW do front usa hoje.
- *
- * Isso NÃO é o desenho final: não expira, não carrega claims, não distingue
- * usuários. É o suficiente para exercitar "rota pública vs. protegida" e
- * "401 sem token". Trocar por JWT real (Nimbus/JJWT com claims de usuário,
- * expiração e assinatura) é o próximo passo natural, sem mudar o resto da
- * cadeia (controllers continuam pedindo `@AuthenticationPrincipal` ou nada).
- */
 public class MockBearerTokenFilter extends OncePerRequestFilter {
 
     public static final String MOCK_TOKEN = "mock-jwt-demo";
     private static final String BEARER_PREFIX = "Bearer ";
 
-    /**
-     * Por padrão o {@code OncePerRequestFilter} pula o dispatch assíncrono
-     * (a segunda passagem pela chain quando um {@code Mono}/{@code DeferredResult}
-     * termina — caso do endpoint reativo em {@code ReactiveWalletController}).
-     * Sem esse override, essa segunda passagem chega ao {@code AuthorizationFilter}
-     * com o {@code SecurityContextHolder} vazio (nunca foi persistido em sessão,
-     * já que a API é stateless) e a resposta final vira 401 mesmo com token
-     * válido. Reautenticar de novo aqui é barato (é só reler o header) e evita
-     * ter que mexer na estratégia global de {@code SecurityContext} só por
-     * causa deste endpoint de demo.
-     */
     @Override
     protected boolean shouldNotFilterAsyncDispatch() {
         return false;
@@ -58,8 +34,6 @@ public class MockBearerTokenFilter extends OncePerRequestFilter {
                     "demo-user", null, List.of(new SimpleGrantedAuthority("ROLE_USER")));
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
-        // Sem token válido: não autentica aqui. Quem decide se a rota exige
-        // autenticação é o `SecurityConfig` — este filtro só tenta autenticar.
         filterChain.doFilter(request, response);
     }
 }

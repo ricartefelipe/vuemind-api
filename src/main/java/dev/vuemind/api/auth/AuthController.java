@@ -7,11 +7,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * Única rota pública da API (ver {@code SecurityConfig}). Devolve um token
- * opaco fixo — o mesmo truque do mock MSW — porque o objetivo deste
- * skeleton é mostrar a forma da API, não uma implementação de JWT completa.
- */
 @RestController
 @RequestMapping("/api/v1/auth")
 public class AuthController {
