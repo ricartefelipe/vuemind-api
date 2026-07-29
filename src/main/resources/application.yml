@@ -3,7 +3,7 @@
 # JPA ou profiles extras — isso entra quando trocarmos o "banco" em memória
 # por um banco de verdade.
 server:
-  port: 8080
+  port: ${SERVER_PORT:8080}
 
 spring:
   application:
