@@ -5,6 +5,7 @@ import dev.vuemind.api.beneficiaries.dto.CreateBeneficiaryRequest;
 import dev.vuemind.api.common.ApiException;
 import dev.vuemind.api.store.InMemoryStore;
 import dev.vuemind.api.store.model.Beneficiary;
+import dev.vuemind.api.store.model.OnboardingStepCode;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
@@ -32,6 +33,7 @@ public class BeneficiaryService {
 
         Beneficiary beneficiary = new Beneficiary(UUID.randomUUID().toString(), request.name(), request.pixKey());
         store.beneficiaries().add(beneficiary);
+        store.completedSteps().add(OnboardingStepCode.FIRST_BENEFICIARY);
         return toDto(beneficiary);
     }
 

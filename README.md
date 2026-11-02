@@ -72,6 +72,10 @@ desta API já libera qualquer origem `http://localhost:*`.
 | POST | `/api/v1/beneficiaries` | Bearer |
 | DELETE | `/api/v1/beneficiaries/{id}` | Bearer |
 | POST | `/api/v1/transfers/pix` (aceita header `Idempotency-Key`) | Bearer |
+| GET | `/api/v1/notifications` | Bearer |
+| POST | `/api/v1/notifications/{id}/read` | Bearer |
+| POST | `/api/v1/notifications/read-all` | Bearer |
+| GET | `/api/v1/me/onboarding` | Bearer |
 | GET | `/api/v1/reactive/wallet/balance` (demo WebFlux, `Mono<BalanceResponse>`) | Bearer |
 
 Autenticação: enviar `Authorization: Bearer mock-jwt-demo` (token fixo
