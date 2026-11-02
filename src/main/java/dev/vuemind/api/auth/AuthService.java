@@ -7,6 +7,7 @@ import dev.vuemind.api.common.ApiException;
 import dev.vuemind.api.security.MockBearerTokenFilter;
 import dev.vuemind.api.store.InMemoryStore;
 import dev.vuemind.api.store.model.MockUser;
+import dev.vuemind.api.store.model.OnboardingStepCode;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +29,8 @@ public class AuthService {
         if (!credenciaisValidas) {
             throw new ApiException(HttpStatus.UNAUTHORIZED, "INVALID_CREDENTIALS", "Email ou senha inválidos.");
         }
+
+        store.completedSteps().add(OnboardingStepCode.PROFILE_OK);
 
         UserDto userDto = new UserDto(user.id(), user.name(), user.email());
         return new LoginResponse(MockBearerTokenFilter.MOCK_TOKEN, userDto);
