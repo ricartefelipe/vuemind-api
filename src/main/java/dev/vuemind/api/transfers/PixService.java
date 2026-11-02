@@ -3,6 +3,8 @@ package dev.vuemind.api.transfers;
 import dev.vuemind.api.common.ApiException;
 import dev.vuemind.api.store.InMemoryStore;
 import dev.vuemind.api.store.model.Beneficiary;
+import dev.vuemind.api.store.model.Notification;
+import dev.vuemind.api.store.model.OnboardingStepCode;
 import dev.vuemind.api.store.model.Transaction;
 import dev.vuemind.api.store.model.TransactionType;
 import dev.vuemind.api.store.model.Transfer;
@@ -58,6 +60,14 @@ public class PixService {
                 "PIX para " + beneficiary.name(),
                 now,
                 beneficiary.name()));
+
+        store.completedSteps().add(OnboardingStepCode.FIRST_PIX);
+        store.notifications().add(new Notification(
+                UUID.randomUUID().toString(),
+                "PIX enviado",
+                "Transferência de " + request.amountCents() + " centavos para " + beneficiary.name() + " foi concluída.",
+                false,
+                now));
 
         if (idempotencyKey != null) {
             store.idempotency().put(idempotencyKey, transfer);

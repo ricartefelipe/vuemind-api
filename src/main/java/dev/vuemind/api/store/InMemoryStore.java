@@ -2,14 +2,19 @@ package dev.vuemind.api.store;
 
 import dev.vuemind.api.store.model.Beneficiary;
 import dev.vuemind.api.store.model.MockUser;
+import dev.vuemind.api.store.model.Notification;
+import dev.vuemind.api.store.model.OnboardingStepCode;
 import dev.vuemind.api.store.model.Transaction;
 import dev.vuemind.api.store.model.TransactionType;
 import dev.vuemind.api.store.model.Transfer;
 import jakarta.annotation.PostConstruct;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicLong;
@@ -25,6 +30,8 @@ public class InMemoryStore {
     private final List<Transaction> transactions = new CopyOnWriteArrayList<>();
     private final List<Transfer> transfers = new CopyOnWriteArrayList<>();
     private final Map<String, Transfer> idempotency = new ConcurrentHashMap<>();
+    private final List<Notification> notifications = new CopyOnWriteArrayList<>();
+    private final Set<OnboardingStepCode> completedSteps = Collections.synchronizedSet(EnumSet.noneOf(OnboardingStepCode.class));
 
     @PostConstruct
     void seed() {
@@ -38,6 +45,25 @@ public class InMemoryStore {
                 "Recebido",
                 Instant.now().minus(2, ChronoUnit.DAYS),
                 "Carlos"));
+
+        Instant now = Instant.now();
+        notifications.add(new Notification(
+                "n1", "PIX recebido", "Você recebeu um PIX de R$ 500,00 de Carlos.", false, now.minus(2, ChronoUnit.DAYS)));
+        notifications.add(new Notification(
+                "n2",
+                "Limite diário próximo",
+                "Você já utilizou uma parte relevante do seu limite diário de PIX.",
+                false,
+                now.minus(1, ChronoUnit.DAYS)));
+        notifications.add(new Notification(
+                "n3",
+                "Complete seu onboarding",
+                "Cadastre um favorecido e faça seu primeiro PIX para liberar todo o app.",
+                false,
+                now.minus(1, ChronoUnit.HOURS)));
+
+        completedSteps.add(OnboardingStepCode.PROFILE_OK);
+        completedSteps.add(OnboardingStepCode.FIRST_BENEFICIARY);
     }
 
     public MockUser user() {
@@ -62,5 +88,13 @@ public class InMemoryStore {
 
     public Map<String, Transfer> idempotency() {
         return idempotency;
+    }
+
+    public List<Notification> notifications() {
+        return notifications;
+    }
+
+    public Set<OnboardingStepCode> completedSteps() {
+        return completedSteps;
     }
 }

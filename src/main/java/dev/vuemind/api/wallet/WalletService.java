@@ -1,6 +1,7 @@
 package dev.vuemind.api.wallet;
 
 import dev.vuemind.api.store.InMemoryStore;
+import dev.vuemind.api.store.model.OnboardingStepCode;
 import dev.vuemind.api.store.model.Transaction;
 import dev.vuemind.api.store.model.TransactionType;
 import dev.vuemind.api.wallet.dto.BalanceResponse;
@@ -25,6 +26,7 @@ public class WalletService {
 
     public List<TransactionDto> getTransactions(Instant from, Instant to, String type) {
         TransactionType typeFilter = parseType(type);
+        store.completedSteps().add(OnboardingStepCode.VIEW_STATEMENT);
         return store.transactions().stream()
                 .filter(transaction -> from == null || !transaction.createdAt().isBefore(from))
                 .filter(transaction -> to == null || !transaction.createdAt().isAfter(to))
