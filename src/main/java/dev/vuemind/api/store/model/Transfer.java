@@ -7,5 +7,7 @@ public record Transfer(
         String beneficiaryId,
         long amountCents,
         String status,
-        Instant createdAt) {
+        Instant createdAt,
+        String endToEndId,
+        String correlationId) {
 }
