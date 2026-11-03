@@ -30,6 +30,7 @@ public class InMemoryStore {
     private final List<Transaction> transactions = new CopyOnWriteArrayList<>();
     private final List<Transfer> transfers = new CopyOnWriteArrayList<>();
     private final Map<String, Transfer> idempotency = new ConcurrentHashMap<>();
+    private final Set<String> endToEndIds = ConcurrentHashMap.newKeySet();
     private final List<Notification> notifications = new CopyOnWriteArrayList<>();
     private final Set<OnboardingStepCode> completedSteps = Collections.synchronizedSet(EnumSet.noneOf(OnboardingStepCode.class));
 
@@ -88,6 +89,11 @@ public class InMemoryStore {
 
     public Map<String, Transfer> idempotency() {
         return idempotency;
+    }
+
+    /** Identificadores end-to-end já emitidos, para garantir que nenhum se repita. */
+    public Set<String> endToEndIds() {
+        return endToEndIds;
     }
 
     public List<Notification> notifications() {

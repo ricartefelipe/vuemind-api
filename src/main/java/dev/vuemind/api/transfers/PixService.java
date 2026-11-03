@@ -16,6 +16,7 @@ import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+/** PIX simulado: debita o saldo da conta de demonstração, sem nenhuma chamada ao SPI. */
 @Service
 public class PixService {
 
@@ -25,7 +26,7 @@ public class PixService {
         this.store = store;
     }
 
-    public synchronized TransferDto executePix(CreatePixRequest request, String idempotencyKey) {
+    public synchronized TransferDto executePix(CreatePixRequest request, String idempotencyKey, String correlationId) {
         Optional<Transfer> cached = Optional.ofNullable(store.idempotency().get(idempotencyKey));
         if (cached.isPresent()) {
             return toDto(cached.get());
@@ -51,7 +52,13 @@ public class PixService {
 
         Instant now = Instant.now();
         Transfer transfer = new Transfer(
-                UUID.randomUUID().toString(), request.beneficiaryId(), request.amountCents(), "COMPLETED", now);
+                UUID.randomUUID().toString(),
+                request.beneficiaryId(),
+                request.amountCents(),
+                "COMPLETED",
+                now,
+                novoEndToEndId(now),
+                correlationId);
         store.transfers().add(transfer);
         store.transactions().add(new Transaction(
                 UUID.randomUUID().toString(),
@@ -76,8 +83,33 @@ public class PixService {
         return toDto(transfer);
     }
 
+    public TransferDto findById(String id) {
+        return store.transfers().stream()
+                .filter(item -> item.id().equals(id))
+                .findFirst()
+                .map(this::toDto)
+                .orElseThrow(() -> new ApiException(
+                        HttpStatus.NOT_FOUND, "TRANSFER_NOT_FOUND", "Transferência não encontrada."));
+    }
+
+    /** Gera o identificador na confirmação; repete o sorteio no caso, improvável, de colidir com um já emitido. */
+    private String novoEndToEndId(Instant momento) {
+        String id;
+        do {
+            id = EndToEndIds.gerar(momento);
+        } while (store.endToEndIds().contains(id));
+        store.endToEndIds().add(id);
+        return id;
+    }
+
     private TransferDto toDto(Transfer transfer) {
         return new TransferDto(
-                transfer.id(), transfer.beneficiaryId(), transfer.amountCents(), transfer.status(), transfer.createdAt());
+                transfer.id(),
+                transfer.beneficiaryId(),
+                transfer.amountCents(),
+                transfer.status(),
+                transfer.createdAt(),
+                transfer.endToEndId(),
+                transfer.correlationId());
     }
 }

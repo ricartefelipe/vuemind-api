@@ -71,7 +71,8 @@ desta API já libera qualquer origem `http://localhost:*`.
 | GET | `/api/v1/beneficiaries` | Bearer |
 | POST | `/api/v1/beneficiaries` | Bearer |
 | DELETE | `/api/v1/beneficiaries/{id}` | Bearer |
-| POST | `/api/v1/transfers/pix` (aceita header `Idempotency-Key`) | Bearer |
+| POST | `/api/v1/transfers/pix` (aceita headers `Idempotency-Key` e `X-Correlation-Id`) | Bearer |
+| GET | `/api/v1/transfers/{id}` | Bearer |
 | GET | `/api/v1/notifications` | Bearer |
 | POST | `/api/v1/notifications/{id}/read` | Bearer |
 | POST | `/api/v1/notifications/read-all` | Bearer |
@@ -152,6 +153,12 @@ transfers/     PIX (regra de negócio + idempotência)
 - PIX com idempotência (header `Idempotency-Key`) e erro 409 semântico para
   saldo insuficiente (vs. 400 para input inválido) — mesma regra de negócio
   do mock, só que com debit atômico (`AtomicLong`/`synchronized`).
+- O PIX é simulado: nenhum valor sai da conta e nada passa pelo SPI. Cada
+  transferência confirmada recebe um `endToEndId` no formato do arranjo PIX
+  (`E` + ISPB + `yyyyMMddHHmm` em UTC + 11 alfanuméricos, 32 caracteres), com
+  o ISPB fictício `99999999`, que não pertence a nenhum participante do Banco
+  Central. O código é gerado uma vez, na confirmação: repetir a requisição com
+  a mesma `Idempotency-Key` devolve o mesmo código.
 - Próximo passo de arquitetura: outbox pattern no PIX antes de publicar em
   Kafka/SQS, e JPA/Flyway no lugar do `InMemoryStore`.
 
