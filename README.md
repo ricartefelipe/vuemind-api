@@ -69,9 +69,9 @@ desta API já libera qualquer origem `http://localhost:*`.
 | GET | `/api/v1/wallet/balance` | Bearer |
 | GET | `/api/v1/wallet/transactions?from&to&type` | Bearer |
 | GET | `/api/v1/beneficiaries` | Bearer |
-| POST | `/api/v1/beneficiaries` | Bearer |
+| POST | `/api/v1/beneficiaries` (`name`, `pixKey` e `pixKeyType`: `EMAIL`, `CPF`, `PHONE` ou `RANDOM`, com o formato validado como no SpringMind) | Bearer |
 | DELETE | `/api/v1/beneficiaries/{id}` | Bearer |
-| POST | `/api/v1/transfers/pix` (aceita headers `Idempotency-Key` e `X-Correlation-Id`) | Bearer |
+| POST | `/api/v1/transfers/pix` (aceita headers `Idempotency-Key` e `X-Correlation-Id`; `scheduledFor` opcional agenda o PIX) | Bearer |
 | GET | `/api/v1/transfers/{id}` | Bearer |
 | GET | `/api/v1/notifications` | Bearer |
 | POST | `/api/v1/notifications/{id}/read` | Bearer |
@@ -159,6 +159,13 @@ transfers/     PIX (regra de negócio + idempotência)
   o ISPB fictício `99999999`, que não pertence a nenhum participante do Banco
   Central. O código é gerado uma vez, na confirmação: repetir a requisição com
   a mesma `Idempotency-Key` devolve o mesmo código.
+- PIX agendado: com `scheduledFor` (ISO-8601, no futuro e até 365 dias), a
+  transferência fica `SCHEDULED`, sem débito e sem `endToEndId`. Na primeira
+  consulta depois da data (saldo, extrato, notificações ou
+  `GET /transfers/{id}`), ela é executada: com saldo, vira `COMPLETED` e recebe
+  o `endToEndId` nesse momento; sem saldo, vira `FAILED` e gera uma
+  notificação. Data no passado responde 400 `SCHEDULE_IN_PAST`; além de 365
+  dias, 400 `SCHEDULE_TOO_FAR`.
 - Próximo passo de arquitetura: outbox pattern no PIX antes de publicar em
   Kafka/SQS, e JPA/Flyway no lugar do `InMemoryStore`.
 

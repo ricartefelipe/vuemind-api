@@ -4,6 +4,7 @@ import dev.vuemind.api.store.InMemoryStore;
 import dev.vuemind.api.store.model.OnboardingStepCode;
 import dev.vuemind.api.store.model.Transaction;
 import dev.vuemind.api.store.model.TransactionType;
+import dev.vuemind.api.transfers.PixService;
 import dev.vuemind.api.wallet.dto.BalanceResponse;
 import dev.vuemind.api.wallet.dto.TransactionDto;
 import java.time.Instant;
@@ -15,16 +16,20 @@ import org.springframework.stereotype.Service;
 public class WalletService {
 
     private final InMemoryStore store;
+    private final PixService pixService;
 
-    public WalletService(InMemoryStore store) {
+    public WalletService(InMemoryStore store, PixService pixService) {
         this.store = store;
+        this.pixService = pixService;
     }
 
     public BalanceResponse getBalance() {
+        pixService.processDueScheduledTransfers();
         return new BalanceResponse(store.availableCents().get(), "BRL");
     }
 
     public List<TransactionDto> getTransactions(Instant from, Instant to, String type) {
+        pixService.processDueScheduledTransfers();
         TransactionType typeFilter = parseType(type);
         store.completedSteps().add(OnboardingStepCode.VIEW_STATEMENT);
         return store.transactions().stream()
