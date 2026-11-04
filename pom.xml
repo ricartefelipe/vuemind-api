@@ -13,7 +13,7 @@
 
   <groupId>dev.vuemind</groupId>
   <artifactId>vuemind-api</artifactId>
-  <version>0.4.0</version>
+  <version>0.4.1</version>
   <name>vuemind-api</name>
   <description>
     Backend Spring Boot da carteira digital VueMind Wallet. Implementa o
