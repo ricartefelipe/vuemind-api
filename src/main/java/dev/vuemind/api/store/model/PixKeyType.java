@@ -4,6 +4,7 @@ package dev.vuemind.api.store.model;
 public enum PixKeyType {
     EMAIL,
     CPF,
+    CNPJ,
     PHONE,
     RANDOM
 }

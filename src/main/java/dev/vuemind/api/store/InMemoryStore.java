@@ -39,7 +39,7 @@ public class InMemoryStore {
     void seed() {
         // Os mesmos favorecidos dos dados simulados do front (mind-shared), com o tipo da chave.
         beneficiaries.add(new Beneficiary("b1", "Ana Silva", "ana@email.com", PixKeyType.EMAIL));
-        beneficiaries.add(new Beneficiary("b2", "Mercado Central", "11222333000", PixKeyType.CPF));
+        beneficiaries.add(new Beneficiary("b2", "Mercado Central", "11222333000181", PixKeyType.CNPJ));
 
         transactions.add(new Transaction(
                 "t1",

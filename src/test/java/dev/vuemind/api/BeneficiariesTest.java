@@ -39,7 +39,8 @@ class BeneficiariesTest {
         mockMvc.perform(get("/api/v1/beneficiaries").header("Authorization", BEARER))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.items[?(@.id == 'b1')].pixKeyType", hasItem("EMAIL")))
-                .andExpect(jsonPath("$.items[?(@.id == 'b2')].pixKeyType", hasItem("CPF")));
+                .andExpect(jsonPath("$.items[?(@.id == 'b2')].pixKeyType", hasItem("CNPJ")))
+                .andExpect(jsonPath("$.items[?(@.id == 'b2')].pixKey", hasItem("11222333000181")));
     }
 
     @Test
@@ -73,9 +74,36 @@ class BeneficiariesTest {
     @Test
     void tipoDesconhecido_responde400() throws Exception {
         criar("""
-                {"name":"Bruno","pixKey":"11222333000181","pixKeyType":"CNPJ"}
+                {"name":"Bruno","pixKey":"11222333000181","pixKeyType":"PASSAPORTE"}
                 """)
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code", is("VALIDATION_ERROR")));
+    }
+
+    @Test
+    void cnpj_validoEntraNumericoEAlfanumerico() throws Exception {
+        criar("""
+                {"name":"Padaria","pixKey":"11222333000181","pixKeyType":"CNPJ"}
+                """)
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.pixKeyType", is("CNPJ")));
+        criar("""
+                {"name":"Padaria Nova","pixKey":"12ABC34501DE35","pixKeyType":"CNPJ"}
+                """)
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    void digitoVerificadorErrado_responde400() throws Exception {
+        criar("""
+                {"name":"Padaria","pixKey":"11222333000182","pixKeyType":"CNPJ"}
+                """)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code", is("INVALID_PIX_KEY")));
+        criar("""
+                {"name":"Bruno","pixKey":"12345678901","pixKeyType":"CPF"}
+                """)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code", is("INVALID_PIX_KEY")));
     }
 }
