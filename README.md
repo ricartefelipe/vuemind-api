@@ -69,7 +69,7 @@ desta API já libera qualquer origem `http://localhost:*`.
 | GET | `/api/v1/wallet/balance` | Bearer |
 | GET | `/api/v1/wallet/transactions?from&to&type` | Bearer |
 | GET | `/api/v1/beneficiaries` | Bearer |
-| POST | `/api/v1/beneficiaries` (`name`, `pixKey` e `pixKeyType`: `EMAIL`, `CPF`, `PHONE` ou `RANDOM`, com o formato validado como no SpringMind) | Bearer |
+| POST | `/api/v1/beneficiaries` (`name`, `pixKey` e `pixKeyType`: `EMAIL`, `CPF`, `CNPJ`, `PHONE` ou `RANDOM`, com o formato validado como no SpringMind: CPF e CNPJ conferem os dígitos verificadores, o CNPJ aceita o formato alfanumérico e a chave aleatória é um UUID) | Bearer |
 | DELETE | `/api/v1/beneficiaries/{id}` | Bearer |
 | POST | `/api/v1/transfers/pix` (aceita headers `Idempotency-Key` e `X-Correlation-Id`; `scheduledFor` opcional agenda o PIX) | Bearer |
 | GET | `/api/v1/transfers/{id}` | Bearer |
