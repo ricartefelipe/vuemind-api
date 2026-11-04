@@ -1,4 +1,5 @@
-FROM maven:3.9.8-eclipse-temurin-21 AS build
+# maven:3.9.8-eclipse-temurin-21
+FROM maven@sha256:de18e4e51396ad9266f76669779ed6d6b49fbb0f45ed6f39169d87378d548d7d AS build
 
 WORKDIR /project
 
@@ -8,7 +9,8 @@ RUN mvn -B -q -e -DskipTests dependency:go-offline
 COPY src /project/src
 RUN mvn -B -q -DskipTests package
 
-FROM eclipse-temurin:21-jre
+# eclipse-temurin:21-jre
+FROM eclipse-temurin@sha256:0b99b3376fbb50dbf9c0af8535fdd5b8eb0d3fdfc8b1e4967f383b6919f6901a
 
 WORKDIR /work
 
