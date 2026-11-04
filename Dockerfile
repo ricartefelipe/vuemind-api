@@ -12,7 +12,11 @@ FROM eclipse-temurin:21-jre
 
 WORKDIR /work
 
-RUN useradd -r -u 1001 -g root -d /work -s /sbin/nologin appuser \
+# Correções de segurança da base publicadas depois da imagem entram em cada build.
+RUN apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get upgrade -y --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/* \
+    && useradd -r -u 1001 -g root -d /work -s /sbin/nologin appuser \
     && chown -R 1001:0 /work
 
 COPY --from=build /project/target/*.jar /work/app.jar
