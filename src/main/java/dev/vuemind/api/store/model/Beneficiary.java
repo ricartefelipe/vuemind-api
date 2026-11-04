@@ -1,4 +1,4 @@
 package dev.vuemind.api.store.model;
 
-public record Beneficiary(String id, String name, String pixKey) {
+public record Beneficiary(String id, String name, String pixKey, PixKeyType pixKeyType) {
 }

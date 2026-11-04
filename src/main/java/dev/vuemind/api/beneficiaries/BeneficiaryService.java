@@ -27,11 +27,15 @@ public class BeneficiaryService {
     }
 
     public BeneficiaryDto create(CreateBeneficiaryRequest request) {
-        if (isBlank(request.name()) || isBlank(request.pixKey())) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "INVALID_BENEFICIARY", "Nome e chave PIX são obrigatórios.");
+        if (isBlank(request.name()) || isBlank(request.pixKey()) || request.pixKeyType() == null) {
+            throw new ApiException(
+                    HttpStatus.BAD_REQUEST, "INVALID_BENEFICIARY", "Nome, tipo e chave PIX são obrigatórios.");
         }
+        String pixKey = request.pixKey().trim();
+        PixKeyValidator.assertValid(request.pixKeyType(), pixKey);
 
-        Beneficiary beneficiary = new Beneficiary(UUID.randomUUID().toString(), request.name(), request.pixKey());
+        Beneficiary beneficiary = new Beneficiary(
+                UUID.randomUUID().toString(), request.name().trim(), pixKey, request.pixKeyType());
         store.beneficiaries().add(beneficiary);
         store.completedSteps().add(OnboardingStepCode.FIRST_BENEFICIARY);
         return toDto(beneficiary);
@@ -49,6 +53,6 @@ public class BeneficiaryService {
     }
 
     private BeneficiaryDto toDto(Beneficiary beneficiary) {
-        return new BeneficiaryDto(beneficiary.id(), beneficiary.name(), beneficiary.pixKey());
+        return new BeneficiaryDto(beneficiary.id(), beneficiary.name(), beneficiary.pixKey(), beneficiary.pixKeyType());
     }
 }

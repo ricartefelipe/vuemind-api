@@ -4,6 +4,7 @@ import dev.vuemind.api.store.model.Beneficiary;
 import dev.vuemind.api.store.model.MockUser;
 import dev.vuemind.api.store.model.Notification;
 import dev.vuemind.api.store.model.OnboardingStepCode;
+import dev.vuemind.api.store.model.PixKeyType;
 import dev.vuemind.api.store.model.Transaction;
 import dev.vuemind.api.store.model.TransactionType;
 import dev.vuemind.api.store.model.Transfer;
@@ -29,15 +30,16 @@ public class InMemoryStore {
     private final List<Beneficiary> beneficiaries = new CopyOnWriteArrayList<>();
     private final List<Transaction> transactions = new CopyOnWriteArrayList<>();
     private final List<Transfer> transfers = new CopyOnWriteArrayList<>();
-    private final Map<String, Transfer> idempotency = new ConcurrentHashMap<>();
+    private final Map<String, String> idempotency = new ConcurrentHashMap<>();
     private final Set<String> endToEndIds = ConcurrentHashMap.newKeySet();
     private final List<Notification> notifications = new CopyOnWriteArrayList<>();
     private final Set<OnboardingStepCode> completedSteps = Collections.synchronizedSet(EnumSet.noneOf(OnboardingStepCode.class));
 
     @PostConstruct
     void seed() {
-        beneficiaries.add(new Beneficiary("b1", "Ana Silva", "ana@email.com"));
-        beneficiaries.add(new Beneficiary("b2", "Mercado Central", "11222333000181"));
+        // Os mesmos favorecidos dos dados simulados do front (mind-shared), com o tipo da chave.
+        beneficiaries.add(new Beneficiary("b1", "Ana Silva", "ana@email.com", PixKeyType.EMAIL));
+        beneficiaries.add(new Beneficiary("b2", "Mercado Central", "11222333000181", PixKeyType.CNPJ));
 
         transactions.add(new Transaction(
                 "t1",
@@ -87,7 +89,8 @@ public class InMemoryStore {
         return transfers;
     }
 
-    public Map<String, Transfer> idempotency() {
+    /** Chave de idempotência para o id da transferência: a repetição devolve o estado atual dela. */
+    public Map<String, String> idempotency() {
         return idempotency;
     }
 
