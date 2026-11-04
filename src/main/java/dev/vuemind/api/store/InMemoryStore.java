@@ -4,6 +4,7 @@ import dev.vuemind.api.store.model.Beneficiary;
 import dev.vuemind.api.store.model.MockUser;
 import dev.vuemind.api.store.model.Notification;
 import dev.vuemind.api.store.model.OnboardingStepCode;
+import dev.vuemind.api.store.model.PixKeyType;
 import dev.vuemind.api.store.model.Transaction;
 import dev.vuemind.api.store.model.TransactionType;
 import dev.vuemind.api.store.model.Transfer;
@@ -36,8 +37,9 @@ public class InMemoryStore {
 
     @PostConstruct
     void seed() {
-        beneficiaries.add(new Beneficiary("b1", "Ana Silva", "ana@email.com"));
-        beneficiaries.add(new Beneficiary("b2", "Mercado Central", "11222333000181"));
+        // Os mesmos favorecidos dos dados simulados do front (mind-shared), com o tipo da chave.
+        beneficiaries.add(new Beneficiary("b1", "Ana Silva", "ana@email.com", PixKeyType.EMAIL));
+        beneficiaries.add(new Beneficiary("b2", "Mercado Central", "11222333000", PixKeyType.CPF));
 
         transactions.add(new Transaction(
                 "t1",

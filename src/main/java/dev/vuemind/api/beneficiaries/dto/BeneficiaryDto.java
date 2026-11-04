@@ -1,4 +1,6 @@
 package dev.vuemind.api.beneficiaries.dto;
 
-public record BeneficiaryDto(String id, String name, String pixKey) {
+import dev.vuemind.api.store.model.PixKeyType;
+
+public record BeneficiaryDto(String id, String name, String pixKey, PixKeyType pixKeyType) {
 }

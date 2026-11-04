@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import dev.vuemind.api.common.ApiException;
 import dev.vuemind.api.store.InMemoryStore;
 import dev.vuemind.api.store.model.Beneficiary;
+import dev.vuemind.api.store.model.PixKeyType;
 import dev.vuemind.api.transfers.dto.CreatePixRequest;
 import dev.vuemind.api.transfers.dto.TransferDto;
 import java.time.Clock;
@@ -55,7 +56,7 @@ class PixAgendadoTest {
     @BeforeEach
     void preparar() {
         store = new InMemoryStore();
-        store.beneficiaries().add(new Beneficiary("b1", "Ana Silva", "ana@email.com"));
+        store.beneficiaries().add(new Beneficiary("b1", "Ana Silva", "ana@email.com", PixKeyType.EMAIL));
         store.availableCents().set(10_000);
         relogio = new RelogioControlado(INICIO);
         pix = new PixService(store, relogio);
